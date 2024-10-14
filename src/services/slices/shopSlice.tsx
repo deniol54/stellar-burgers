@@ -1,5 +1,15 @@
-import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import { getIngredientsApi, getFeedsApi } from '@api';
+import {
+  createSlice,
+  createAsyncThunk,
+  PayloadAction,
+  createSelector
+} from '@reduxjs/toolkit';
+import {
+  getIngredientsApi,
+  getFeedsApi,
+  orderBurgerApi,
+  getOrdersApi
+} from '@api';
 import { TConstructorItems, TIngredient, TOrder } from '@utils-types';
 
 export const getIngredients = createAsyncThunk('shop/getIngid', async () =>
@@ -10,21 +20,36 @@ export const getFeeds = createAsyncThunk('shop/getFeeds', async () =>
   getFeedsApi()
 );
 
+export const createOrder = createAsyncThunk(
+  'shop/createOrder',
+  async (data: string[]) => orderBurgerApi(data)
+);
+
+export const getOrders = createAsyncThunk('shop/getOrders', async () =>
+  getOrdersApi()
+);
+
 type ShopStore = {
   ingridients: TIngredient[];
   isIngredientsLoading: boolean;
   isOrdersLoading: boolean;
+  isFeedsLoading: boolean;
   orders: TOrder[];
   totalOrders: number;
+  currentOrder: TOrder | null;
+  orderRequest: boolean;
   totalToday: number;
   constructorItems: TConstructorItems;
 };
 
 const initialState: ShopStore = {
   ingridients: [],
-  isIngredientsLoading: true,
-  isOrdersLoading: true,
+  isIngredientsLoading: false,
+  isOrdersLoading: false,
+  isFeedsLoading: false,
   orders: [],
+  currentOrder: null,
+  orderRequest: false,
   totalOrders: 0,
   totalToday: 0,
   constructorItems: {
@@ -68,6 +93,11 @@ const shopSlice = createSlice({
         state.constructorItems.ingredients[action.payload + 1],
         state.constructorItems.ingredients[action.payload]
       ];
+    },
+    resetCurrentOrder: (state) => {
+      state.currentOrder = null;
+      state.constructorItems.ingredients = [];
+      state.constructorItems.bun = undefined;
     }
   },
   selectors: {
@@ -79,10 +109,13 @@ const shopSlice = createSlice({
 
     getConstructorItems: (state) => state.constructorItems,
 
-    getFeed: (state) => ({
-      total: state.totalOrders,
-      totalToday: state.totalToday
-    })
+    getOrderRequest: (state) => state.orderRequest,
+
+    getCurrentOrder: (state) => state.currentOrder,
+
+    getTotal: (state) => state.totalOrders,
+
+    getTotalToday: (state) => state.totalToday
   },
   extraReducers: (builder) => {
     builder
@@ -98,27 +131,60 @@ const shopSlice = createSlice({
       })
 
       .addCase(getFeeds.pending, (state) => {
-        state.isOrdersLoading = true;
+        state.isFeedsLoading = true;
       })
       .addCase(getFeeds.rejected, (state, action) => {
-        state.isOrdersLoading = false;
+        state.isFeedsLoading = false;
       })
       .addCase(getFeeds.fulfilled, (state, action) => {
-        state.isOrdersLoading = false;
-        state.orders = action.payload.orders;
+        state.isFeedsLoading = false;
         state.totalOrders = action.payload.total;
         state.totalToday = action.payload.totalToday;
+      })
+
+      .addCase(createOrder.pending, (state) => {
+        state.orderRequest = true;
+      })
+      .addCase(createOrder.rejected, (state, action) => {
+        state.orderRequest = false;
+      })
+      .addCase(createOrder.fulfilled, (state, action) => {
+        state.orderRequest = false;
+        state.currentOrder = action.payload.order;
+      })
+
+      .addCase(getOrders.pending, (state) => {
+        state.isOrdersLoading = true;
+      })
+      .addCase(getOrders.rejected, (state, action) => {
+        state.isOrdersLoading = false;
+      })
+      .addCase(getOrders.fulfilled, (state, action) => {
+        state.isOrdersLoading = false;
+        state.orders = action.payload;
       });
   }
 });
 
-export const { addItem, removeItem, upItem, downItem } = shopSlice.actions;
+export const { addItem, removeItem, upItem, downItem, resetCurrentOrder } =
+  shopSlice.actions;
 export const shopReducer = shopSlice.reducer;
 
 export const {
   getIsIngredientsLoading,
   getIngredientsFromStore,
   getOrdersFromStore,
-  getFeed,
-  getConstructorItems
+  getConstructorItems,
+  getOrderRequest,
+  getTotal,
+  getTotalToday,
+  getCurrentOrder
 } = shopSlice.selectors;
+
+export const feeds = createSelector(
+  [getTotal, getTotalToday],
+  (total, totalToday) => ({
+    total,
+    totalToday
+  })
+);

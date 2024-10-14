@@ -11,26 +11,27 @@ import {
 } from '@pages';
 import '../../index.css';
 import styles from './app.module.css';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, useMatch } from 'react-router-dom';
 import {
   AppHeader,
   ProtectedRoute,
   OrderInfo,
   Modal,
-  IngredientDetails,
-  OrderStatus
+  IngredientDetails
 } from '@components';
 import { useDispatch } from '../../services/store';
 import { useEffect } from 'react';
-import { getIngredients, getFeeds } from '@slices';
-import { useNavigate } from 'react-router-dom';
+import { getIngredients } from '@slices';
+import { useNavigate, useParams } from 'react-router-dom';
 
 function App() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const profileMatch = useMatch('/profile/orders/:number')?.params.number;
+  const feedMatch = useMatch('/feed/:number')?.params.number;
+  const orderNumber = profileMatch || feedMatch;
   useEffect(() => {
     dispatch(getIngredients());
-    dispatch(getFeeds());
   }, []);
   return (
     <div className={styles.app}>
@@ -42,12 +43,30 @@ function App() {
           path='/ingredients/:id'
           element={
             <Modal title='Детали ингридиента' onClose={() => navigate('/')}>
-              <IngredientDetails />{' '}
+              <IngredientDetails />
             </Modal>
           }
         />
-        <Route path='/feed' element={<Feed />}>
-          <Route path=':number' element={<OrderInfo />} />
+        <Route path='/feed'>
+          <Route
+            index
+            element={
+              <ProtectedRoute>
+                <Feed />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path=':number'
+            element={
+              <Modal
+                title={`#${orderNumber && orderNumber.padStart(6, '0')}`}
+                onClose={() => navigate('/feed')}
+              >
+                <OrderInfo />
+              </Modal>
+            }
+          />
         </Route>
         <Route
           path='/login'
