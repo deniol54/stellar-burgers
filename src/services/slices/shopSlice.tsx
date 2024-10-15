@@ -35,6 +35,7 @@ type ShopStore = {
   isOrdersLoading: boolean;
   isFeedsLoading: boolean;
   orders: TOrder[];
+  userOrders: TOrder[];
   totalOrders: number;
   currentOrder: TOrder | null;
   orderRequest: boolean;
@@ -48,6 +49,7 @@ const initialState: ShopStore = {
   isOrdersLoading: false,
   isFeedsLoading: false,
   orders: [],
+  userOrders: [],
   currentOrder: null,
   orderRequest: false,
   totalOrders: 0,
@@ -115,7 +117,9 @@ const shopSlice = createSlice({
 
     getTotal: (state) => state.totalOrders,
 
-    getTotalToday: (state) => state.totalToday
+    getTotalToday: (state) => state.totalToday,
+
+    getUserOrders: (state) => state.userOrders
   },
   extraReducers: (builder) => {
     builder
@@ -138,6 +142,7 @@ const shopSlice = createSlice({
       })
       .addCase(getFeeds.fulfilled, (state, action) => {
         state.isFeedsLoading = false;
+        state.orders = action.payload.orders;
         state.totalOrders = action.payload.total;
         state.totalToday = action.payload.totalToday;
       })
@@ -161,7 +166,7 @@ const shopSlice = createSlice({
       })
       .addCase(getOrders.fulfilled, (state, action) => {
         state.isOrdersLoading = false;
-        state.orders = action.payload;
+        state.userOrders = action.payload;
       });
   }
 });
@@ -178,7 +183,8 @@ export const {
   getOrderRequest,
   getTotal,
   getTotalToday,
-  getCurrentOrder
+  getCurrentOrder,
+  getUserOrders
 } = shopSlice.selectors;
 
 export const feeds = createSelector(

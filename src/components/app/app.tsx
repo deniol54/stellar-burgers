@@ -48,14 +48,7 @@ function App() {
           }
         />
         <Route path='/feed'>
-          <Route
-            index
-            element={
-              <ProtectedRoute>
-                <Feed />
-              </ProtectedRoute>
-            }
-          />
+          <Route index element={<Feed />} />
           <Route
             path=':number'
             element={
@@ -121,7 +114,12 @@ function App() {
             path='orders/:number'
             element={
               <ProtectedRoute>
-                <OrderInfo />
+                <Modal
+                  title={`#${orderNumber && orderNumber.padStart(6, '0')}`}
+                  onClose={() => navigate('/profile/orders')}
+                >
+                  <OrderInfo />
+                </Modal>
               </ProtectedRoute>
             }
           />

@@ -8,7 +8,7 @@ import {
   updateUserApi,
   logoutApi
 } from '@api';
-import { setCookie } from '../../utils/cookie';
+import { setCookie, deleteCookie } from '../../utils/cookie';
 import { TUser } from '@utils-types';
 
 type UserState = {
@@ -54,7 +54,16 @@ export const updateUser = createAsyncThunk(
   async (data: Partial<TRegisterData>) => updateUserApi(data)
 );
 
-export const logout = createAsyncThunk('user/logout', async () => logoutApi());
+export const logout = createAsyncThunk('user/logout', async () =>
+  logoutApi()
+    .then(() => {
+      localStorage.clear(); // очищаем refreshToken
+      deleteCookie('accessToken'); // очищаем accessToken
+    })
+    .catch(() => {
+      console.log('Ошибка выполнения выхода');
+    })
+);
 
 const userSlice = createSlice({
   name: 'userSlice',
@@ -63,7 +72,9 @@ const userSlice = createSlice({
   selectors: {
     getUserName: (state) => state.user?.name,
 
-    getUserInfo: (state) => state.user
+    getUserInfo: (state) => state.user,
+
+    getIsAuthenticated: (state) => state.isAuthenticated
   },
   extraReducers: (builder) => {
     builder
@@ -111,4 +122,5 @@ const userSlice = createSlice({
 // export const { updateTicker } = shopSlice.actions;
 export const userReducer = userSlice.reducer;
 
-export const { getUserName, getUserInfo } = userSlice.selectors;
+export const { getUserName, getUserInfo, getIsAuthenticated } =
+  userSlice.selectors;

@@ -10,7 +10,7 @@ export const Feed: FC = () => {
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(getFeeds());
-    dispatch(getOrders());
+    // dispatch(getOrders());
   }, []);
   const orders: TOrder[] = useSelector(getOrdersFromStore);
   if (!orders.length) {
@@ -24,7 +24,7 @@ export const Feed: FC = () => {
         <FeedUI
           orders={orders}
           handleGetFeeds={() => {
-            dispatch(getOrders());
+            dispatch(getFeeds());
           }}
         />
       )}
