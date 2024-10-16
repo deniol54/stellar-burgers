@@ -69,7 +69,7 @@ const shopSlice = createSlice({
       else
         state.constructorItems.ingredients.push({
           ...action.payload,
-          id: state.constructorItems.ingredients.length.toString()
+          id: Math.random().toString(16).slice(2)
         });
     },
     removeItem: (state, action: PayloadAction<TIngredient>) => {

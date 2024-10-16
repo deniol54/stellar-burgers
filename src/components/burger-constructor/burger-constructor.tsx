@@ -30,6 +30,7 @@ export const BurgerConstructor: FC = () => {
     }
     const data = constructorItems.ingredients.map((el) => el._id);
     data.unshift(constructorItems.bun._id);
+    data.push(constructorItems.bun._id);
     dispatch(createOrder(data));
   };
   const closeOrderModal = () => {
