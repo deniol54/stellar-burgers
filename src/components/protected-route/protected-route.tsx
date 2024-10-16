@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { FC } from 'react';
-import { useSelector } from '../../services/store';
-import { getUserInfo, getIsAuthenticated } from '@slices';
+import { useDispatch, useSelector } from '../../services/store';
+import { getUserInfo, getIsAuthenticated, getUser } from '@slices';
 import { Preloader } from '@ui';
 import { Navigate, useMatch } from 'react-router-dom';
 

@@ -11,7 +11,7 @@ import {
 } from '@pages';
 import '../../index.css';
 import styles from './app.module.css';
-import { Routes, Route, useMatch } from 'react-router-dom';
+import { Routes, Route, useMatch, useLocation } from 'react-router-dom';
 import {
   AppHeader,
   ProtectedRoute,
@@ -27,6 +27,8 @@ import { useNavigate, useParams } from 'react-router-dom';
 function App() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const location = useLocation();
+  const backgroundLocation = location.state?.background;
   const profileMatch = useMatch('/profile/orders/:number')?.params.number;
   const feedMatch = useMatch('/feed/:number')?.params.number;
   const orderNumber = profileMatch || feedMatch;
@@ -36,15 +38,18 @@ function App() {
   return (
     <div className={styles.app}>
       <AppHeader />
-      <Routes>
+      <Routes location={backgroundLocation || location}>
         <Route path='*' element={<NotFound404 />} />
         <Route path='/' element={<ConstructorPage />} />
         <Route
           path='/ingredients/:id'
           element={
-            <Modal title='Детали ингридиента' onClose={() => navigate('/')}>
+            <div className={styles.detailPageWrap}>
+              <p className={`text text_type_main-large ${styles.detaliHeader}`}>
+                Детали ингридиента
+              </p>
               <IngredientDetails />
-            </Modal>
+            </div>
           }
         />
         <Route path='/feed'>
@@ -52,12 +57,14 @@ function App() {
           <Route
             path=':number'
             element={
-              <Modal
-                title={`#${orderNumber && orderNumber.padStart(6, '0')}`}
-                onClose={() => navigate('/feed')}
-              >
+              <div className={styles.detailPageWrap}>
+                <p
+                  className={`text text_type_digits-default ${styles.detaliHeader}`}
+                >
+                  #{orderNumber && orderNumber.padStart(6, '0')}
+                </p>
                 <OrderInfo />
-              </Modal>
+              </div>
             }
           />
         </Route>
@@ -114,17 +121,53 @@ function App() {
             path='orders/:number'
             element={
               <ProtectedRoute>
-                <Modal
-                  title={`#${orderNumber && orderNumber.padStart(6, '0')}`}
-                  onClose={() => navigate('/profile/orders')}
-                >
+                <div className={styles.detailPageWrap}>
+                  <p
+                    className={`text text_type_digits-default ${styles.detaliHeader}`}
+                  >
+                    #{orderNumber && orderNumber.padStart(6, '0')}
+                  </p>
                   <OrderInfo />
-                </Modal>
+                </div>
               </ProtectedRoute>
             }
           />
         </Route>
       </Routes>
+      {backgroundLocation && (
+        <Routes>
+          <Route
+            path='/ingredients/:id'
+            element={
+              <Modal title='Детали ингридиента' onClose={() => navigate('/')}>
+                <IngredientDetails />
+              </Modal>
+            }
+          />
+          <Route
+            path='/feed/:number'
+            element={
+              <Modal
+                title={`#${orderNumber && orderNumber.padStart(6, '0')}`}
+                onClose={() => navigate('/feed')}
+              >
+                <OrderInfo />
+              </Modal>
+            }
+          />
+          <Route
+            path='/profile/orders/:number'
+            element={
+              <Modal
+                title={`#${orderNumber && orderNumber.padStart(6, '0')}`}
+                onClose={() => navigate('/profile/orders')}
+              >
+                <OrderInfo />
+              </Modal>
+            }
+          />
+        </Routes>
+      )}
     </div>
   );
 }

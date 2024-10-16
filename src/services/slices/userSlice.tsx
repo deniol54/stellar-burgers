@@ -86,7 +86,6 @@ const userSlice = createSlice({
         state.isAuthChecked = true;
       })
       .addCase(registerUser.fulfilled, (state, action) => {
-        console.log(action.payload);
         state.user = action.payload;
         state.loginUserRequest = false;
         state.isAuthenticated = true;
@@ -105,6 +104,12 @@ const userSlice = createSlice({
         state.loginUserRequest = false;
         state.isAuthenticated = true;
         state.isAuthChecked = true;
+      })
+
+      .addCase(getUser.fulfilled, (state, action) => {
+        state.user = action.payload.user;
+        state.isAuthChecked = true;
+        state.isAuthenticated = true;
       })
 
       .addCase(updateUser.fulfilled, (state, action) => {
