@@ -1,4 +1,4 @@
-import { expect, test, jest, describe } from '@jest/globals';
+import { expect, test, describe } from '@jest/globals';
 import {
   shopReducer,
   addItem,
@@ -15,7 +15,6 @@ import {
 import { ingredientsData } from 'src/test-data/ingredients';
 import { feedsData } from 'src/test-data/feeds';
 import { orderData, orderResponseData } from 'src/test-data/order';
-import store from '../store';
 
 const ingredient1 = {
   id: '1',
@@ -27,7 +26,7 @@ const ingredient2 = {
   ...ingredientsData[2]
 };
 
-describe('тесты экшенов слайса для работы с ингридиентами', () => {
+describe('тесты редьюсеров слайса для работы с ингридиентами', () => {
   const initialState: ShopStore = {
     ingridients: [],
     isIngredientsLoading: false,
