@@ -29,7 +29,7 @@ export const getOrders = createAsyncThunk('shop/getOrders', async () =>
   getOrdersApi()
 );
 
-type ShopStore = {
+export type ShopStore = {
   ingridients: TIngredient[];
   isIngredientsLoading: boolean;
   isOrdersLoading: boolean;
