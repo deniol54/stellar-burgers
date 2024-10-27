@@ -112,11 +112,9 @@ describe('тесты редьюсеров слайса для работы с п
     };
     const actualState = userReducer(
       currentState,
-      updateUser.fulfilled(
-        { user: changedUserData, success: true },
-        '',
-        {name: changedUserData.name}
-      )
+      updateUser.fulfilled({ user: changedUserData, success: true }, '', {
+        name: changedUserData.name
+      })
     );
     expect(actualState).toEqual(expectedState);
   });
@@ -125,13 +123,10 @@ describe('тесты редьюсеров слайса для работы с п
     const currentState = {
       ...initialState,
       user: userData,
-      isAuthenticated:true,
-      isAuthChecked : true
+      isAuthenticated: true,
+      isAuthChecked: true
     };
-    const actualState = userReducer(
-      currentState,
-      logout.fulfilled(void(0), '')
-    );
+    const actualState = userReducer(currentState, logout.fulfilled(void 0, ''));
     expect(actualState).toEqual(initialState);
   });
 });
