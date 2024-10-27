@@ -1,5 +1,8 @@
-import Cypress from "cypress";
 const url = 'https://norma.nomoreparties.space/api';
+const ingredient = '[data-cy="643d69a5c3f7b9001cfa0943"]';//Соус фирменный Space Sauce
+const constructor_list = '[data-cy="constructor_list"]';
+const bun = '[data-cy="643d69a5c3f7b9001cfa093c"]';
+
 
 beforeEach(() => {
     cy.intercept({
@@ -21,35 +24,37 @@ beforeEach(() => {
         fixture: 'user.json'
     });
     cy.viewport(1920,1080);
-    cy.visit('http://localhost:4000'); 
+    cy.visit('/');
+    cy.get('#modals').as('modal');
+    cy.get(ingredient).as('ingredient');
 });
 
 
 describe('тестирование добавление ингредиента', () => {
   it('обновление счетчика ингредиента', () => {
-      cy.get('[data-cy="643d69a5c3f7b9001cfa0943"]').children('button').click();
-      cy.get('[data-cy="643d69a5c3f7b9001cfa0943"]').find('.counter__num').contains('1');
+      cy.get('@ingredient').children('button').click();
+      cy.get('@ingredient').find('.counter__num').contains('1');
   });
 
   it('обновление списка ингридиенов в конструкторе', () => {
-    cy.get('[data-cy="643d69a5c3f7b9001cfa0943"]').children('button').click();
-    cy.get('[data-cy="constructor_list"]').find('.constructor-element__text').contains('Соус фирменный Space Sauce');
+    cy.get('@ingredient').children('button').click();
+    cy.get(constructor_list).find('.constructor-element__text').contains('Соус фирменный Space Sauce');
   })
 }); 
 
 describe('тестирование модальных окон', () => {
     it('открытие модального окна ингредиента', () => {
-        cy.get('#modals').should('be.empty');
-        cy.get('[data-cy="643d69a5c3f7b9001cfa0943"]').children('a').click();
-        cy.get('#modals').should('be.not.empty');
+        cy.get('@modal').should('be.empty');
+        cy.get('@ingredient').children('a').click();
+        cy.get('@modal').should('be.not.empty');
         cy.get('[data-cy="ingredient_title"]').contains('Соус фирменный Space Sauce');
     });
     it('закрытие модального окна ингредиента по клику на крестик', () => {
-        cy.get('#modals').should('be.empty');
-        cy.get('[data-cy="643d69a5c3f7b9001cfa0943"]').children('a').click();
-        cy.get('#modals').should('be.not.empty');
-        cy.get('#modals').find('button').click();
-        cy.get('#modals').should('be.empty');
+        cy.get('@modal').should('be.empty');
+        cy.get('@ingredient').children('a').click();
+        cy.get('@modal').should('be.not.empty');
+        cy.get('@modal').find('button').click();
+        cy.get('@modal').should('be.empty');
     });
 });
 
@@ -70,8 +75,8 @@ describe('тестирование оформление заказа', () => {
   
   
     it('отправка заказа c проверкой корректности ответа', () => {
-        cy.get('[data-cy="643d69a5c3f7b9001cfa0943"]').children('button').click();
-        cy.get('[data-cy="643d69a5c3f7b9001cfa093c"]').children('button').click();
+        cy.get('@ingredient').children('button').click();
+        cy.get(bun).children('button').click();
         cy.get('[data-cy="order_button"]').click();
         cy.intercept(
             {
@@ -80,10 +85,10 @@ describe('тестирование оформление заказа', () => {
             }, {
             fixture: 'order.json'
           });
-        cy.get('#modals').should('be.not.empty');
+        cy.get('@modal').should('be.not.empty');
         cy.get('[data-cy="order_number"]').contains('57755');
-        cy.get('#modals').find('button').click();
-        cy.get('#modals').should('be.empty');
-        cy.get('[data-cy="constructor_list"]').children('div').contains('Выберите начинку');
+        cy.get('@modal').find('button').click();
+        cy.get('@modal').should('be.empty');
+        cy.get(constructor_list).children('div').contains('Выберите начинку');
     });
   });

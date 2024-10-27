@@ -2,7 +2,6 @@ import { expect, test, describe } from '@jest/globals';
 import {
   shopReducer,
   addItem,
-  ShopStore,
   removeItem,
   upItem,
   downItem,
@@ -10,7 +9,8 @@ import {
   getIngredients,
   getFeeds,
   createOrder,
-  getOrders
+  getOrders,
+  shopInutialState
 } from './shopSlice';
 import { ingredientsData } from 'src/test-data/ingredients';
 import { feedsData } from 'src/test-data/feeds';
@@ -26,23 +26,14 @@ const ingredient2 = {
   ...ingredientsData[2]
 };
 
-describe('тесты редьюсеров слайса для работы с ингридиентами', () => {
-  const initialState: ShopStore = {
-    ingridients: [],
-    isIngredientsLoading: false,
-    isOrdersLoading: false,
-    isFeedsLoading: false,
-    orders: [],
-    userOrders: [],
-    currentOrder: null,
-    orderRequest: false,
-    totalOrders: 0,
-    totalToday: 0,
-    constructorItems: {
-      ingredients: [ingredient1, ingredient2]
-    }
-  };
+const initialState = {
+  ...shopInutialState,
+  constructorItems: {
+    ingredients: [ingredient1, ingredient2]
+  }
+};
 
+describe('тесты редьюсеров слайса для работы с ингридиентами', () => {
   test('добавить ингридиент в заказ', () => {
     const newState = shopReducer(initialState, addItem(ingredientsData[3]));
     const { constructorItems } = newState;

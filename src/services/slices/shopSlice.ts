@@ -43,7 +43,7 @@ export type ShopStore = {
   constructorItems: TConstructorItems;
 };
 
-const initialState: ShopStore = {
+export const initialState: ShopStore = {
   ingridients: [],
   isIngredientsLoading: false,
   isOrdersLoading: false,
@@ -174,7 +174,7 @@ const shopSlice = createSlice({
 export const { addItem, removeItem, upItem, downItem, resetCurrentOrder } =
   shopSlice.actions;
 export const shopReducer = shopSlice.reducer;
-
+export {initialState as shopInutialState};
 export const {
   getIsIngredientsLoading,
   getIngredientsFromStore,

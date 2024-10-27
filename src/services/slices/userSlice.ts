@@ -126,6 +126,6 @@ const userSlice = createSlice({
 
 // export const { updateTicker } = shopSlice.actions;
 export const userReducer = userSlice.reducer;
-
+export {initialState as userInitialState};
 export const { getUserName, getUserInfo, getIsAuthenticated } =
   userSlice.selectors;
