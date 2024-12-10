@@ -21,7 +21,7 @@ import {
 } from '@components';
 import { useDispatch } from '../../services/store';
 import { useEffect } from 'react';
-import { getIngredients } from '@slices';
+import { getIngredients, getUser } from '@slices';
 import { useNavigate, useParams } from 'react-router-dom';
 
 function App() {
@@ -34,6 +34,7 @@ function App() {
   const orderNumber = profileMatch || feedMatch;
   useEffect(() => {
     dispatch(getIngredients());
+    dispatch(getUser());
   }, []);
   return (
     <div className={styles.app}>

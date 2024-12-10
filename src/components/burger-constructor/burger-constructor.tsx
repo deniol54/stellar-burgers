@@ -19,7 +19,6 @@ export const BurgerConstructor: FC = () => {
   const dispatch = useDispatch();
   const isAuth = useSelector(getIsAuthenticated);
   const navigate = useNavigate();
-
   const orderModalData = useSelector(getCurrentOrder);
 
   const onOrderClick = () => {

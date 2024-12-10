@@ -11,7 +11,7 @@ import {
 import { setCookie, deleteCookie } from '../../utils/cookie';
 import { TUser } from '@utils-types';
 
-type UserState = {
+export type UserState = {
   user: TUser;
   isAuthChecked: boolean;
   isAuthenticated: boolean;
@@ -83,7 +83,7 @@ const userSlice = createSlice({
       })
       .addCase(registerUser.rejected, (state, action) => {
         state.loginUserRequest = false;
-        state.isAuthChecked = true;
+        state.isAuthChecked = false;
       })
       .addCase(registerUser.fulfilled, (state, action) => {
         state.user = action.payload;
@@ -97,7 +97,7 @@ const userSlice = createSlice({
       })
       .addCase(loginUser.rejected, (state, action) => {
         state.loginUserRequest = false;
-        state.isAuthChecked = true;
+        state.isAuthChecked = false;
       })
       .addCase(loginUser.fulfilled, (state, action) => {
         state.user = action.payload;
@@ -126,6 +126,6 @@ const userSlice = createSlice({
 
 // export const { updateTicker } = shopSlice.actions;
 export const userReducer = userSlice.reducer;
-
+export {initialState as userInitialState};
 export const { getUserName, getUserInfo, getIsAuthenticated } =
   userSlice.selectors;
